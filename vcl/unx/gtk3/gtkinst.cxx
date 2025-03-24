@@ -4788,6 +4788,47 @@ namespace
         g_object_get(G_OBJECT(pMessageDialog), "secondary-text", &pText, nullptr);
         return OUString(pText, pText ? strlen(pText) : 0, RTL_TEXTENCODING_UTF8);
     }
+
+    void set_checkbox_text(GtkMessageDialog* pMessageDialog, std::u16string_view rText)
+    {
+        GtkWidget* pCheckButton = GTK_WIDGET(g_object_get_data(G_OBJECT(pMessageDialog), "checkbox"));
+        if (GTK_IS_CHECK_BUTTON(pCheckButton))
+        {
+            gtk_button_set_label(GTK_BUTTON(pCheckButton),
+                                 OUStringToOString(rText, RTL_TEXTENCODING_UTF8).getStr());
+        }
+    }
+
+    OUString get_checkbox_text(GtkMessageDialog* pMessageDialog)
+    {
+        GtkWidget* pCheckButton = GTK_WIDGET(g_object_get_data(G_OBJECT(pMessageDialog), "checkbox"));
+        if (GTK_IS_CHECK_BUTTON(pCheckButton))
+        {
+            g_autofree const char* pText = gtk_button_get_label(GTK_BUTTON(pCheckButton));
+            return OUString(pText, pText ? strlen(pText) : 0, RTL_TEXTENCODING_UTF8);
+        }
+
+        return OUString();
+    }
+
+    void set_checkbox_status(GtkMessageDialog* pMessageDialog, bool rChecked)
+    {
+        GtkWidget* pCheckButton = GTK_WIDGET(g_object_get_data(G_OBJECT(pMessageDialog), "checkbox"));
+        if (GTK_IS_CHECK_BUTTON(pCheckButton))
+        {
+            gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pCheckButton), rChecked);
+        }
+    }
+
+    bool get_checkbox_status(GtkMessageDialog* pMessageDialog)
+    {
+        GtkWidget* pCheckButton = GTK_WIDGET(g_object_get_data(G_OBJECT(pMessageDialog), "checkbox"));
+        if (GTK_IS_CHECK_BUTTON(pCheckButton))
+        {
+            return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pCheckButton));
+        }
+        return false;
+    }
 }
 
 namespace
@@ -7415,6 +7456,26 @@ public:
     virtual OUString get_secondary_text() const override
     {
         return ::get_secondary_text(m_pMessageDialog);
+    }
+
+    virtual void set_checkbox_text(const OUString& rText) override
+    {
+        return ::set_checkbox_text(m_pMessageDialog, rText);
+    }
+
+    virtual OUString get_checkbox_text() const override
+    {
+        return ::get_checkbox_text(m_pMessageDialog);
+    }
+
+    virtual void set_checkbox_status(const bool& rStatus) override
+    {
+        return ::set_checkbox_status(m_pMessageDialog, rStatus);
+    }
+
+    virtual bool get_checkbox_status() const override
+    {
+        return ::get_checkbox_status(m_pMessageDialog);
     }
 
     virtual std::unique_ptr<weld::Container> weld_message_area() override
@@ -25174,13 +25235,34 @@ std::unique_ptr<weld::Builder> GtkInstance::CreateInterimBuilder(vcl::Window* pP
     return std::make_unique<GtkInstanceBuilder>(pWindow, rUIRoot, rUIFile, xEmbedWindow.get(), bAllowCycleFocusOut);
 }
 
-weld::MessageDialog* GtkInstance::CreateMessageDialog(weld::Widget* pParent, VclMessageType eMessageType, VclButtonsType eButtonsType, const OUString &rPrimaryMessage)
+weld::MessageDialog* GtkInstance::CreateMessageDialog(weld::Widget* pParent, VclMessageType eMessageType, VclButtonsType eButtonsType,
+                                                      const OUString &rPrimaryMessage, const OUString& rCheckboxMessage,
+                                                      VclCheckboxType eCheckboxType)
 {
     GtkInstanceWidget* pParentInstance = dynamic_cast<GtkInstanceWidget*>(pParent);
     GtkWindow* pParentWindow = pParentInstance ? pParentInstance->getWindow() : nullptr;
     GtkMessageDialog* pMessageDialog = GTK_MESSAGE_DIALOG(gtk_message_dialog_new(pParentWindow, GTK_DIALOG_MODAL,
                                                           VclToGtk(eMessageType), VclToGtk(eButtonsType), "%s",
                                                           OUStringToOString(rPrimaryMessage, RTL_TEXTENCODING_UTF8).getStr()));
+
+    if (eCheckboxType != VclCheckboxType::Hidden && rCheckboxMessage.getLength() > 0)
+    {
+        GtkWidget *pMessageArea = gtk_message_dialog_get_message_area(pMessageDialog);
+        GtkWidget* pVBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
+        gtk_widget_set_margin_top(pVBox, 5);
+        gtk_widget_set_margin_bottom(pVBox, 5);
+
+        GtkWidget* pCheckButton = gtk_check_button_new_with_label(OUStringToOString(rCheckboxMessage, RTL_TEXTENCODING_UTF8).getStr());
+        gtk_widget_set_halign(pCheckButton, GTK_ALIGN_START);
+        gtk_box_pack_start(GTK_BOX(pVBox), pCheckButton, FALSE, FALSE, 0);
+        g_object_set_data(G_OBJECT(pMessageDialog), "checkbox", pCheckButton);
+        gtk_widget_show_all(pVBox);
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pCheckButton), eCheckboxType == VclCheckboxType::Checked);
+
+        gtk_container_add(GTK_CONTAINER(pMessageArea), pVBox);
+        gtk_widget_show(pVBox);
+    }
+
     return new GtkInstanceMessageDialog(pMessageDialog, nullptr, true);
 }
 

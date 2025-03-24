@@ -1317,6 +1317,11 @@ public:
                                                     VclButtonsType eButtonType, const OUString& rPrimaryMessage,
                                                     const ILibreOfficeKitNotifier* pNotifier = nullptr);
 
+    static weld::MessageDialog* CreateMessageDialogWithCheckbox(weld::Widget* pParent, VclMessageType eMessageType,
+                                                    VclButtonsType eButtonType, const OUString& rPrimaryMessage,
+                                                    const OUString& rCheckboxMessage, VclCheckboxType eCheckboxType = VclCheckboxType::Unchecked,
+                                                    const ILibreOfficeKitNotifier* pNotifier = nullptr);
+
     static weld::Window* GetFrameWeld(const css::uno::Reference<css::awt::XWindow>& rWindow);
 
     // ILibreOfficeKitNotifier

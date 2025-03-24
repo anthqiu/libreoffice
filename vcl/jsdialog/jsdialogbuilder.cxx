@@ -906,10 +906,10 @@ std::unique_ptr<weld::Calendar> JSInstanceBuilder::weld_calendar(const OUString&
     return pWeldWidget;
 }
 
-weld::MessageDialog*
-JSInstanceBuilder::CreateMessageDialog(weld::Widget* pParent, VclMessageType eMessageType,
-                                       VclButtonsType eButtonType, const OUString& rPrimaryMessage,
-                                       const vcl::ILibreOfficeKitNotifier* pNotifier)
+weld::MessageDialog* JSInstanceBuilder::CreateMessageDialog(
+    weld::Widget* pParent, VclMessageType eMessageType, VclButtonsType eButtonType,
+    const OUString& rPrimaryMessage, const OUString& rCheckboxMessage,
+    VclCheckboxType eCheckboxType, const vcl::ILibreOfficeKitNotifier* pNotifier)
 {
     SalInstanceWidget* pParentInstance = dynamic_cast<SalInstanceWidget*>(pParent);
     SystemWindow* pParentWidget = pParentInstance ? pParentInstance->getSystemWindow() : nullptr;
@@ -922,6 +922,12 @@ JSInstanceBuilder::CreateMessageDialog(weld::Widget* pParent, VclMessageType eMe
     pNotifier = xMessageDialog->GetLOKNotifier();
     if (pNotifier)
     {
+        if (eCheckboxType != VclCheckboxType::Hidden && !rCheckboxMessage.isEmpty())
+        {
+            xMessageDialog->set_checkbox_text(rCheckboxMessage);
+            xMessageDialog->set_checkbox_status(eCheckboxType == VclCheckboxType::Checked);
+        }
+
         OUString sWindowId = OUString::number(xMessageDialog->GetLOKWindowId());
         InsertWindowToMap(sWindowId);
         xMessageDialog->SetLOKTunnelingState(false);
@@ -1512,6 +1518,18 @@ void JSMessageDialog::set_primary_text(const OUString& rText)
 void JSMessageDialog::set_secondary_text(const OUString& rText)
 {
     SalInstanceMessageDialog::set_secondary_text(rText);
+    sendFullUpdate();
+}
+
+void JSMessageDialog::set_checkbox_text(const OUString& rText)
+{
+    SalInstanceMessageDialog::set_checkbox_text(rText);
+    sendFullUpdate();
+}
+
+void JSMessageDialog::set_checkbox_status(const bool& rChecked)
+{
+    SalInstanceMessageDialog::set_checkbox_status(rChecked);
     sendFullUpdate();
 }
 

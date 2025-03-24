@@ -19,6 +19,7 @@ class MessageDialog final : public Dialog
 private:
     VclButtonsType m_eButtonsType;
     VclMessageType m_eMessageType;
+    VclCheckboxType m_eCheckboxType;
     VclPtr<VclBox> m_pOwnedContentArea;
     VclPtr<VclButtonBox> m_pOwnedActionArea;
     VclPtr<VclGrid> m_pGrid;
@@ -26,8 +27,10 @@ private:
     VclPtr<FixedImage> m_pImage;
     VclPtr<VclMultiLineEdit> m_pPrimaryMessage;
     VclPtr<VclMultiLineEdit> m_pSecondaryMessage;
+    VclPtr<CheckBox> m_pCheckBox;
     OUString m_sPrimaryString;
     OUString m_sSecondaryString;
+    OUString m_sCheckboxString;
     void create_owned_areas();
 
     static void SetMessagesWidths(vcl::Window const* pParent, VclMultiLineEdit* pPrimaryMessage,
@@ -40,12 +43,17 @@ private:
 
 public:
     MessageDialog(vcl::Window* pParent, OUString aMessage, VclMessageType eMessageType,
-                  VclButtonsType eButtonsType);
+                  VclButtonsType eButtonsType, OUString eCheckboxStr = "",
+                  VclCheckboxType eCheckboxType = VclCheckboxType::Unchecked);
     virtual bool set_property(const OUString& rKey, const OUString& rValue) override;
     OUString const& get_primary_text() const;
     OUString const& get_secondary_text() const;
+    OUString const& get_checkbox_text() const;
     void set_primary_text(const OUString& rPrimaryString);
     void set_secondary_text(const OUString& rSecondaryString);
+    void set_checkbox_text(const OUString& rCheckboxString);
+    void set_checkbox_status(const bool& rChecked);
+    bool get_checkbox_status() const;
     virtual ~MessageDialog() override;
     virtual void dispose() override;
 

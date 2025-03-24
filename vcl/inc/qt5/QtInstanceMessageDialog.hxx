@@ -28,11 +28,19 @@ public:
 
     virtual void set_secondary_text(const rtl::OUString& rText) override;
 
+    virtual void set_checkbox_text(const rtl::OUString& rText) override;
+
+    virtual void set_checkbox_status(const bool& rStatus) override;
+
     virtual std::unique_ptr<weld::Container> weld_message_area() override;
 
     virtual OUString get_primary_text() const override;
 
     virtual OUString get_secondary_text() const override;
+
+    virtual OUString get_checkbox_text() const override;
+
+    virtual bool get_checkbox_status() const override;
 
     // weld::Dialog overrides
     virtual void add_button(const OUString& rText, int nResponse,

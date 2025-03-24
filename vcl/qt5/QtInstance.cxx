@@ -47,6 +47,7 @@
 #include <QtCore/QThread>
 #include <QtGui/QScreen>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QMessageBox>
 
@@ -921,17 +922,18 @@ QtInstance::CreateBuilder(weld::Widget* pParent, const OUString& rUIRoot, const 
     }
 }
 
-weld::MessageDialog* QtInstance::CreateMessageDialog(weld::Widget* pParent,
-                                                     VclMessageType eMessageType,
-                                                     VclButtonsType eButtonsType,
-                                                     const OUString& rPrimaryMessage)
+weld::MessageDialog*
+QtInstance::CreateMessageDialog(weld::Widget* pParent, VclMessageType eMessageType,
+                                VclButtonsType eButtonsType, const OUString& rPrimaryMessage,
+                                const OUString& rCheckboxMessage, VclCheckboxType eCheckboxType)
 {
     SolarMutexGuard g;
     if (!IsMainThread())
     {
         weld::MessageDialog* pDialog;
         RunInMainThread([&] {
-            pDialog = CreateMessageDialog(pParent, eMessageType, eButtonsType, rPrimaryMessage);
+            pDialog = CreateMessageDialog(pParent, eMessageType, eButtonsType, rPrimaryMessage,
+                                          rCheckboxMessage, eCheckboxType);
         });
         return pDialog;
     }
@@ -939,7 +941,7 @@ weld::MessageDialog* QtInstance::CreateMessageDialog(weld::Widget* pParent,
     if (QtData::noWeldedWidgets())
     {
         return SalInstance::CreateMessageDialog(pParent, eMessageType, eButtonsType,
-                                                rPrimaryMessage);
+                                                rPrimaryMessage, rCheckboxMessage, eCheckboxType);
     }
     else
     {
@@ -948,6 +950,16 @@ weld::MessageDialog* QtInstance::CreateMessageDialog(weld::Widget* pParent,
         pMessageBox->setText(toQString(rPrimaryMessage));
         pMessageBox->setIcon(vclMessageTypeToQtIcon(eMessageType));
         pMessageBox->setWindowTitle(vclMessageTypeToQtTitle(eMessageType));
+
+        if (eCheckboxType != VclCheckboxType::Hidden && !rCheckboxMessage.isEmpty())
+        {
+            QCheckBox* pCheckBox = new QCheckBox(toQString(rCheckboxMessage), pMessageBox);
+            if (eCheckboxType == VclCheckboxType::Checked)
+                pCheckBox->setChecked(true);
+
+            pMessageBox->setCheckBox(pCheckBox);
+        }
+
         QtInstanceMessageDialog* pDialog = new QtInstanceMessageDialog(pMessageBox);
         pDialog->addStandardButtons(eButtonsType);
         return pDialog;

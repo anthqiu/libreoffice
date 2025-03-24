@@ -1207,6 +1207,14 @@ public:
 
     virtual OUString get_secondary_text() const override;
 
+    virtual void set_checkbox_text(const OUString& rText) override;
+
+    virtual OUString get_checkbox_text() const override;
+
+    virtual void set_checkbox_status(const bool& rStatus) override;
+
+    virtual bool get_checkbox_status() const override;
+
     virtual std::unique_ptr<weld::Container> weld_message_area() override;
 };
 

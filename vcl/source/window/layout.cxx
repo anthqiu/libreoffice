@@ -2434,6 +2434,27 @@ void MessageDialog::create_message_area()
     m_pSecondaryMessage->SetText(m_sSecondaryString);
     m_pSecondaryMessage->Show(bHasSecondaryText);
 
+    sal_Int32 nCheckboxStrLen = m_sCheckboxString.getLength();
+
+    if (m_eCheckboxType != VclCheckboxType::Hidden && nCheckboxStrLen > 0)
+    {
+        m_pCheckBox.set(VclPtr<CheckBox>::Create(m_pMessageBox));
+        m_pCheckBox->SetText(m_sCheckboxString);
+
+        if (m_eCheckboxType == VclCheckboxType::Checked)
+        {
+            m_pCheckBox->Check(true);
+        }
+
+        m_pCheckBox->set_hexpand(true);
+        m_pCheckBox->set_valign(VclAlign::Start);
+        m_pCheckBox->Show();
+    }
+    else if (nCheckboxStrLen > 0)
+    {
+        SAL_WARN("vcl.layout", "MessageDialog: eCheckboxType is set to Hidden, but aCheckbox is not empty");
+    }
+
     MessageDialog::SetMessagesWidths(this, m_pPrimaryMessage, bHasSecondaryText ? m_pSecondaryMessage.get() : nullptr);
 
     VclButtonBox *pButtonBox = get_action_area();
@@ -2535,16 +2556,20 @@ MessageDialog::MessageDialog(vcl::Window* pParent, WinBits nStyle)
 MessageDialog::MessageDialog(vcl::Window* pParent,
     OUString aMessage,
     VclMessageType eMessageType,
-    VclButtonsType eButtonsType)
+    VclButtonsType eButtonsType,
+    OUString aCheckbox,
+    VclCheckboxType eCheckboxType)
     : Dialog(pParent, WB_MOVEABLE | WB_3DLOOK | WB_CLOSEABLE)
     , m_eButtonsType(eButtonsType)
     , m_eMessageType(eMessageType)
+    , m_eCheckboxType(eCheckboxType)
     , m_pGrid(nullptr)
     , m_pMessageBox(nullptr)
     , m_pImage(nullptr)
     , m_pPrimaryMessage(nullptr)
     , m_pSecondaryMessage(nullptr)
     , m_sPrimaryString(std::move(aMessage))
+    , m_sCheckboxString(std::move(aCheckbox))
 {
     SetType(WindowType::MESSBOX);
     create_owned_areas();
@@ -2578,6 +2603,7 @@ void MessageDialog::dispose()
     disposeOwnedButtons();
     m_pPrimaryMessage.disposeAndClear();
     m_pSecondaryMessage.disposeAndClear();
+    m_pCheckBox.disposeAndClear();
     m_pImage.disposeAndClear();
     m_pMessageBox.disposeAndClear();
     m_pGrid.disposeAndClear();
@@ -2620,6 +2646,13 @@ OUString const & MessageDialog::get_secondary_text() const
     const_cast<MessageDialog*>(this)->setDeferredProperties();
 
     return m_sSecondaryString;
+}
+
+OUString const & MessageDialog::get_checkbox_text() const
+{
+    const_cast<MessageDialog*>(this)->setDeferredProperties();
+
+    return m_sCheckboxString;
 }
 
 bool MessageDialog::set_property(const OUString &rKey, const OUString &rValue)
@@ -2676,6 +2709,31 @@ void MessageDialog::set_secondary_text(const OUString &rSecondaryString)
         m_pSecondaryMessage->Show(!m_sSecondaryString.isEmpty());
         MessageDialog::SetMessagesWidths(this, m_pPrimaryMessage, !m_sSecondaryString.isEmpty() ? m_pSecondaryMessage.get() : nullptr);
     }
+}
+
+void MessageDialog::set_checkbox_text(const OUString& rCheckboxString)
+{
+    m_sCheckboxString = rCheckboxString;
+    if (m_pCheckBox)
+    {
+        m_pCheckBox->SetText(m_sCheckboxString);
+        m_pCheckBox->Show(m_eCheckboxType != VclCheckboxType::Hidden);
+        m_pCheckBox->Check(m_eCheckboxType == VclCheckboxType::Checked);
+    }
+}
+
+void MessageDialog::set_checkbox_status(const bool& rStatus)
+{
+    m_eCheckboxType = rStatus ? VclCheckboxType::Checked : VclCheckboxType::Unchecked;
+    if (m_pCheckBox)
+    {
+        m_pCheckBox->Check(rStatus);
+    }
+}
+
+bool MessageDialog::get_checkbox_status() const
+{
+    return m_pCheckBox && m_pCheckBox->IsChecked();
 }
 
 void MessageDialog::StateChanged(StateChangedType nType)

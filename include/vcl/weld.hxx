@@ -671,6 +671,10 @@ public:
     virtual OUString get_primary_text() const = 0;
     virtual void set_secondary_text(const OUString& rText) = 0;
     virtual OUString get_secondary_text() const = 0;
+    virtual void set_checkbox_text(const OUString& rText) = 0;
+    virtual OUString get_checkbox_text() const = 0;
+    virtual void set_checkbox_status(const bool& rChecked) = 0;
+    virtual bool get_checkbox_status() const = 0;
     virtual std::unique_ptr<Container> weld_message_area() = 0;
 };
 

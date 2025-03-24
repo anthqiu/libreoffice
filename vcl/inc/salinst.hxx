@@ -173,7 +173,8 @@ public:
     virtual std::unique_ptr<weld::Builder> CreateInterimBuilder(vcl::Window* pParent, const OUString& rUIRoot, const OUString& rUIFile,
                                                 bool bAllowCycleFocusOut, sal_uInt64 nLOKWindowId = 0);
     virtual weld::MessageDialog* CreateMessageDialog(weld::Widget* pParent, VclMessageType eMessageType,
-                                                     VclButtonsType eButtonType, const OUString& rPrimaryMessage);
+                                                     VclButtonsType eButtonType, const OUString& rPrimaryMessage,
+                                                     const OUString& rCheckboxMessage, VclCheckboxType eCheckboxType);
     virtual weld::Window* GetFrameWeld(const css::uno::Reference<css::awt::XWindow>& rWindow);
 
     // methods for XDisplayConnection

@@ -2040,6 +2040,26 @@ OUString SalInstanceMessageDialog::get_secondary_text() const
     return m_xMessageDialog->get_secondary_text();
 }
 
+void SalInstanceMessageDialog::set_checkbox_text(const OUString& rText)
+{
+    return m_xMessageDialog->set_checkbox_text(rText);
+}
+
+OUString SalInstanceMessageDialog::get_checkbox_text() const
+{
+    return m_xMessageDialog->get_checkbox_text();
+}
+
+void SalInstanceMessageDialog::set_checkbox_status(const bool& rStatus)
+{
+    return m_xMessageDialog->set_checkbox_status(rStatus);
+}
+
+bool SalInstanceMessageDialog::get_checkbox_status() const
+{
+    return m_xMessageDialog->get_checkbox_status();
+}
+
 std::unique_ptr<weld::Container> SalInstanceMessageDialog::weld_message_area()
 {
     return std::make_unique<SalInstanceContainer>(m_xMessageDialog->get_message_area(), m_pBuilder,
@@ -7654,15 +7674,16 @@ void SalInstanceWidget::help_hierarchy_foreach(const std::function<bool(const OU
     }
 }
 
-weld::MessageDialog* SalInstance::CreateMessageDialog(weld::Widget* pParent,
-                                                      VclMessageType eMessageType,
-                                                      VclButtonsType eButtonsType,
-                                                      const OUString& rPrimaryMessage)
+weld::MessageDialog*
+SalInstance::CreateMessageDialog(weld::Widget* pParent, VclMessageType eMessageType,
+                                 VclButtonsType eButtonsType, const OUString& rPrimaryMessage,
+                                 const OUString& rCheckboxMessage = "",
+                                 VclCheckboxType eCheckboxType = VclCheckboxType::Unchecked)
 {
     SalInstanceWidget* pParentInstance = dynamic_cast<SalInstanceWidget*>(pParent);
     SystemWindow* pParentWidget = pParentInstance ? pParentInstance->getSystemWindow() : nullptr;
     VclPtrInstance<MessageDialog> xMessageDialog(pParentWidget, rPrimaryMessage, eMessageType,
-                                                 eButtonsType);
+                                                 eButtonsType, rCheckboxMessage, eCheckboxType);
     return new SalInstanceMessageDialog(xMessageDialog, nullptr, true);
 }
 

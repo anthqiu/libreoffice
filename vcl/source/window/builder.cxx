@@ -229,9 +229,20 @@ weld::MessageDialog* Application::CreateMessageDialog(weld::Widget* pParent, Vcl
                                                       const ILibreOfficeKitNotifier* pNotifier)
 {
     if (comphelper::LibreOfficeKit::isActive())
-        return JSInstanceBuilder::CreateMessageDialog(pParent, eMessageType, eButtonType, rPrimaryMessage, pNotifier);
+        return JSInstanceBuilder::CreateMessageDialog(pParent, eMessageType, eButtonType, rPrimaryMessage, "", VclCheckboxType::Hidden, pNotifier);
     else
-        return ImplGetSVData()->mpDefInst->CreateMessageDialog(pParent, eMessageType, eButtonType, rPrimaryMessage);
+        return ImplGetSVData()->mpDefInst->CreateMessageDialog(pParent, eMessageType, eButtonType, rPrimaryMessage, "", VclCheckboxType::Hidden);
+}
+
+weld::MessageDialog* Application::CreateMessageDialogWithCheckbox(weld::Widget* pParent, VclMessageType eMessageType,
+                                                                  VclButtonsType eButtonType, const OUString& rPrimaryMessage,
+                                                                  const OUString& rCheckboxMessage, VclCheckboxType eCheckboxType,
+                                                                  const ILibreOfficeKitNotifier* pNotifier)
+{
+    if (comphelper::LibreOfficeKit::isActive())
+        return JSInstanceBuilder::CreateMessageDialog(pParent, eMessageType, eButtonType, rPrimaryMessage, rCheckboxMessage, eCheckboxType, pNotifier);
+    else
+        return ImplGetSVData()->mpDefInst->CreateMessageDialog(pParent, eMessageType, eButtonType, rPrimaryMessage, rCheckboxMessage, eCheckboxType);
 }
 
 weld::Window* Application::GetFrameWeld(const css::uno::Reference<css::awt::XWindow>& rWindow)

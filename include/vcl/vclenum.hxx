@@ -237,6 +237,13 @@ enum class VclButtonsType
     OkCancel
 };
 
+enum class VclCheckboxType
+{
+    Hidden,
+    Unchecked,
+    Checked
+};
+
 enum class VclMessageType
 {
     Info,

@@ -210,6 +210,8 @@ public:
     static weld::MessageDialog*
     CreateMessageDialog(weld::Widget* pParent, VclMessageType eMessageType,
                         VclButtonsType eButtonType, const OUString& rPrimaryMessage,
+                        const OUString& rCheckboxMessage = "",
+                        VclCheckboxType eCheckboxType = VclCheckboxType::Unchecked,
                         const vcl::ILibreOfficeKitNotifier* pNotifier = nullptr);
 
     // regular widgets
@@ -605,6 +607,10 @@ public:
     virtual void set_primary_text(const OUString& rText) override;
 
     virtual void set_secondary_text(const OUString& rText) override;
+
+    virtual void set_checkbox_text(const OUString& rText) override;
+
+    virtual void set_checkbox_status(const bool& rChecked) override;
 
     virtual void response(int response) override;
 

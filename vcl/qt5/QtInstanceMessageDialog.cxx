@@ -62,6 +62,32 @@ void QtInstanceMessageDialog::set_secondary_text(const rtl::OUString& rText)
     positionExtraControlsContainer();
 }
 
+void QtInstanceMessageDialog::set_checkbox_text(const rtl::OUString& rText)
+{
+    SolarMutexGuard g;
+    QtInstance& rQtInstance = GetQtInstance();
+    if (!rQtInstance.IsMainThread())
+    {
+        rQtInstance.RunInMainThread([&] { set_checkbox_text(rText); });
+        return;
+    }
+
+    positionExtraControlsContainer();
+}
+
+void QtInstanceMessageDialog::set_checkbox_status(const bool& rStatus)
+{
+    SolarMutexGuard g;
+    QtInstance& rQtInstance = GetQtInstance();
+    if (!rQtInstance.IsMainThread())
+    {
+        rQtInstance.RunInMainThread([&] { set_checkbox_status(rStatus); });
+        return;
+    }
+
+    positionExtraControlsContainer();
+}
+
 std::unique_ptr<weld::Container> QtInstanceMessageDialog::weld_message_area()
 {
     return std::make_unique<QtInstanceContainer>(m_pExtraControlsContainer);
@@ -95,6 +121,36 @@ OUString QtInstanceMessageDialog::get_secondary_text() const
 
     assert(m_pMessageDialog);
     return toOUString(m_pMessageDialog->informativeText());
+}
+
+OUString QtInstanceMessageDialog::get_checkbox_text() const
+{
+    SolarMutexGuard g;
+    QtInstance& rQtInstance = GetQtInstance();
+    OUString sText;
+    if (!rQtInstance.IsMainThread())
+    {
+        rQtInstance.RunInMainThread([&] { sText = get_checkbox_text(); });
+        return sText;
+    }
+
+    assert(m_pMessageDialog);
+    return OUString();
+}
+
+bool QtInstanceMessageDialog::get_checkbox_status() const
+{
+    SolarMutexGuard g;
+    QtInstance& rQtInstance = GetQtInstance();
+    bool bStatus;
+    if (!rQtInstance.IsMainThread())
+    {
+        rQtInstance.RunInMainThread([&] { bStatus = get_checkbox_status(); });
+        return bStatus;
+    }
+
+    assert(m_pMessageDialog);
+    return false;
 }
 
 void QtInstanceMessageDialog::add_button(const OUString& rText, int nResponse, const OUString&)
