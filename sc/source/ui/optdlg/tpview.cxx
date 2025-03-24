@@ -486,6 +486,8 @@ ScTpLayoutOptions::ScTpLayoutOptions(weld::Container* pPage, weld::DialogControl
     , m_xEnterPasteModeImg(m_xBuilder->weld_widget(u"lockenter_paste"_ustr))
     , m_xWarnActiveSheetCB(m_xBuilder->weld_check_button(u"warnactivesheet_cb"_ustr))
     , m_xWarnActiveSheetImg(m_xBuilder->weld_widget(u"lockwarnactivesheet"_ustr))
+    , m_xAfCopySingleCellCB(m_xBuilder->weld_check_button(u"afcopysinglecellcb"_ustr))
+    , m_xAfCopySingleCellImg(m_xBuilder->weld_widget(u"lockafcopysinglecell"_ustr))
 {
     SetExchangeSupport();
 
@@ -546,7 +548,7 @@ OUString ScTpLayoutOptions::GetAllStrings()
     OUString checkButton[] = { u"aligncb"_ustr,   u"editmodecb"_ustr, u"enter_paste_mode_cb"_ustr,
                                u"formatcb"_ustr,  u"exprefcb"_ustr,   u"sortrefupdatecb"_ustr,
                                u"markhdrcb"_ustr, u"replwarncb"_ustr, u"legacy_cell_selection_cb"_ustr,
-                               u"warnactivesheet_cb"_ustr };
+                               u"warnactivesheet_cb"_ustr, u"afcopysinglecellcb"_ustr };
 
     for (const auto& check : checkButton)
     {
@@ -668,6 +670,12 @@ bool    ScTpLayoutOptions::FillItemSet( SfxItemSet* rCoreSet )
     if (m_xWarnActiveSheetCB->get_state_changed_from_saved())
     {
         rCoreSet->Put( SfxBoolItem( SID_SC_INPUT_WARNACTIVESHEET, m_xWarnActiveSheetCB->get_active() ) );
+        bRet = true;
+    }
+
+    if (m_xAfCopySingleCellCB->get_state_changed_from_saved())
+    {
+        rCoreSet->Put( SfxBoolItem( SID_AF_COPYSINGLECELL, m_xAfCopySingleCellCB->get_active() ) );
         bRet = true;
     }
 
@@ -830,6 +838,13 @@ void    ScTpLayoutOptions::Reset( const SfxItemSet* rCoreSet )
     m_xWarnActiveSheetCB->set_sensitive(!bReadOnly);
     m_xWarnActiveSheetImg->set_visible(bReadOnly);
 
+    if( const SfxBoolItem* pAfCopySingleCellItem = rCoreSet->GetItemIfSet( SID_AF_COPYSINGLECELL, false ) )
+        m_xAfCopySingleCellCB->set_active( pAfCopySingleCellItem->GetValue() );
+
+    bReadOnly = officecfg::Office::Calc::Input::AfCopySingleCell::isReadOnly();
+    m_xAfCopySingleCellCB->set_sensitive(!bReadOnly);
+    m_xAfCopySingleCellImg->set_visible(bReadOnly);
+
     m_xAlignCB->save_state();
     m_xAlignLB->save_value();
     m_xEditModeCB->save_state();
@@ -843,6 +858,7 @@ void    ScTpLayoutOptions::Reset( const SfxItemSet* rCoreSet )
     m_xLegacyCellSelectionCB->save_state();
     m_xEnterPasteModeCB->save_state();
     m_xWarnActiveSheetCB->save_state();
+    m_xAfCopySingleCellCB->save_state();
 
     AlignHdl(*m_xAlignCB);
 

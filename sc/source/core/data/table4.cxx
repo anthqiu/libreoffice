@@ -50,6 +50,8 @@
 #include <listenercontext.hxx>
 #include <scopetools.hxx>
 #include <o3tl/string_view.hxx>
+#include <scmod.hxx>
+#include <inputopt.hxx>
 
 #include <math.h>
 #include <memory>
@@ -243,8 +245,6 @@ void ScTable::FillAnalyse( SCCOL nCol1, SCROW nRow1, SCCOL nCol2, SCROW nRow2,
     rListData = nullptr;
     rCmd = FILL_SIMPLE;
     rSkipOverlappedCells = false;
-    if ( nScFillModeMouseModifier & KEY_MOD1 )
-        return ;        // Ctrl-key: Copy
 
     SCCOL nAddX;
     SCROW nAddY;
@@ -261,6 +261,16 @@ void ScTable::FillAnalyse( SCCOL nCol1, SCROW nRow1, SCCOL nCol2, SCROW nRow2,
         nAddY = 0;
         nCount = static_cast<SCSIZE>(nCol2 - nCol1 + 1);
     }
+
+    // tdf#130570
+    bool bSingleCell = nCount == 1 && ScModule::get()->GetInputOptions().GetAfCopySingleCell();
+    bool bModPressed = nScFillModeMouseModifier & KEY_MOD1;
+
+    if (bSingleCell != bModPressed)
+        // Ctrl-key: Switch to alternative AutoFill mode
+        // tdf#130570: When only single cell is highlighted, the default AutoFill mode may become
+        // Copy instead of Series (auto increment) based on user config
+        return ;
 
     // Try to analyse the merged cells only if there are no filtered rows in the destination area
     // Else fallback to the old way to avoid regression.
@@ -1427,6 +1437,12 @@ OUString ScTable::GetAutoFillPreview( const ScRange& rSource, SCCOL nEndX, SCROW
                     nInc, aDurationInc, nMinDigits, pListData, nListIndex,
                     true, bSkipOverlappedCells, aNonOverlappedCellIdx);
 
+        // tdf#130570
+        bool bSingleCell = nSrcCount == 1 && ScModule::get()->GetInputOptions().GetAfCopySingleCell();
+        bool bModPressed = nScFillModeMouseModifier & KEY_MOD1;
+        // bUseCopy = (bSingleCell && !bModPressed) || (!bSingleCell && bModPressed);
+        bool bUseCopy = bSingleCell != bModPressed;
+
         if ( pListData )                            // user defined list
         {
             sal_uInt16 nListCount = pListData->GetSubCount();
@@ -1469,7 +1485,7 @@ OUString ScTable::GetAutoFillPreview( const ScRange& rSource, SCCOL nEndX, SCROW
                     {
                         aValue = aCell.getString(&rDocument);
 
-                        if ( !(nScFillModeMouseModifier & KEY_MOD1) )
+                        if ( !bUseCopy )
                         {
                             sal_Int32 nVal;
                             sal_uInt16 nCellDigits = 0; // look at each source cell individually
@@ -1499,7 +1515,8 @@ OUString ScTable::GetAutoFillPreview( const ScRange& rSource, SCCOL nEndX, SCROW
                         sal_uInt32 nNumFmt = GetNumberFormat( nSrcX, nSrcY );
                         //  overflow is possible...
                         double nVal = aCell.getDouble();
-                        if ( !(nScFillModeMouseModifier & KEY_MOD1) )
+
+                        if ( !bUseCopy )
                         {
                             const SvNumFormatType nFormatType = rDocument.GetFormatTable()->GetType(nNumFmt);
                             bool bPercentCell = (nFormatType == SvNumFormatType::PERCENT);
@@ -1913,12 +1930,18 @@ void ScTable::FillAutoSimple(
 {
     SCCOLROW nSource = nISrcStart;
     double nDelta;
-    if ( nScFillModeMouseModifier & KEY_MOD1 )
+    // tdf#130570
+    bool bSingleCell = nISrcStart == nISrcEnd && ScModule::get()->GetInputOptions().GetAfCopySingleCell();
+    bool bModPressed = nScFillModeMouseModifier & KEY_MOD1;
+    // bUseCopy = (bSingleCell && !bModPressed) || (!bSingleCell && bModPressed);
+    bool bUseCopy = bSingleCell != bModPressed;
+    if ( bUseCopy )
         nDelta = 0.0;
     else if ( bPositive )
         nDelta = 1.0;
     else
         nDelta = -1.0;
+
     sal_uInt64 nFormulaCounter = nActFormCnt;
     bool bGetCell = true;
     bool bBooleanCell = false;
@@ -1992,7 +2015,7 @@ void ScTable::FillAutoSimple(
                                 aValue = aSrcCell.getSharedString()->getString();
                             else
                                 aValue = ScEditUtil::GetString(*aSrcCell.getEditText(), &rDocument);
-                            if ( !(nScFillModeMouseModifier & KEY_MOD1) && !bHasFiltered )
+                            if ( !bUseCopy && !bHasFiltered )
                             {
                                 nCellDigits = 0;    // look at each source cell individually
                                 nHeadNoneTail = lcl_DecompValueString(
@@ -2074,7 +2097,7 @@ void ScTable::FillAutoSimple(
                     nSource = nISrcStart;
                     bGetCell = true;
                 }
-                if ( !(nScFillModeMouseModifier & KEY_MOD1) )
+                if ( !bUseCopy )
                 {
                     if ( bPositive )
                         nDelta += 1.0;

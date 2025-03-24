@@ -1287,6 +1287,12 @@ void ScModule::ModifyOptions( const SfxItemSet& rOptSet )
         bSaveInputOptions = true;
     }
 
+    if( const SfxBoolItem* pItem = rOptSet.GetItemIfSet( SID_AF_COPYSINGLECELL ) )
+    {
+        aInputOptions.SetAfCopySingleCell( pItem->GetValue() );
+        bSaveInputOptions = true;
+    }
+
     // PrintOptions
     if ( const ScTpPrintItem* pItem = rOptSet.GetItemIfSet(SID_SCPRINTOPTIONS) )
     {
@@ -2009,6 +2015,7 @@ std::optional<SfxItemSet> ScModule::CreateItemSet( sal_uInt16 nId )
                 SID_SC_INPUT_SELECTION, SID_SC_INPUT_MARK_HEADER,
                 SID_SC_INPUT_TEXTWYSIWYG, SID_SC_INPUT_TEXTWYSIWYG,
                 SID_SC_INPUT_REPLCELLSWARN, SID_SC_INPUT_REPLCELLSWARN,
+                SID_AF_COPYSINGLECELL, SID_AF_COPYSINGLECELL,
                 // TP_VIEW:
                 SID_SC_OPT_SYNCZOOM, SID_SC_OPT_KEY_BINDING_COMPAT,
                 SID_SC_OPT_LINKS, SID_SC_OPT_LINKS>);
@@ -2069,6 +2076,8 @@ std::optional<SfxItemSet> ScModule::CreateItemSet( sal_uInt16 nId )
                     rInpOpt.GetEnterPasteMode() ) );
         pRet->Put( SfxBoolItem( SID_SC_INPUT_WARNACTIVESHEET,
                     rInpOpt.GetWarnActiveSheet() ) );
+        pRet->Put( SfxBoolItem( SID_AF_COPYSINGLECELL,
+                    rInpOpt.GetAfCopySingleCell() ) );
 
         // RID_SC_TP_PRINT
         pRet->Put( ScTpPrintItem( GetPrintOptions() ) );

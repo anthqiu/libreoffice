@@ -4,7 +4,7 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkAdjustment" id="adjustment1">
     <property name="lower">0.5</property>
-    <property name="upper">99.99</property>
+    <property name="upper">100</property>
     <property name="value">1.25</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">0.10</property>
@@ -98,6 +98,11 @@
                 <property name="halign">center</property>
                 <property name="valign">center</property>
                 <property name="icon-name">res/lock.png</property>
+                <child internal-child="accessible">
+                  <object class="AtkObject" id="lockunitlb-atkobject">
+                    <property name="AtkObject::accessible-description">lockunitlb</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -111,6 +116,11 @@
                 <property name="halign">center</property>
                 <property name="valign">center</property>
                 <property name="icon-name">res/lock.png</property>
+                <child internal-child="accessible">
+                  <object class="AtkObject" id="locktabmf-atkobject">
+                    <property name="AtkObject::accessible-description">locktabmf</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -262,7 +272,7 @@
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
                 <child>
-                  <!-- n-columns=3 n-rows=10 -->
+                  <!-- n-columns=3 n-rows=11 -->
                   <object class="GtkGrid" id="grid3">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -604,6 +614,44 @@
                       <packing>
                         <property name="left-attach">1</property>
                         <property name="top-attach">9</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkImage" id="lockafcopysinglecell">
+                        <property name="can-focus">False</property>
+                        <property name="no-show-all">True</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="icon-name">res/lock.png</property>
+                        <child internal-child="accessible">
+                          <object class="AtkObject" id="lockafcopysinglecell-atkobject">
+                            <property name="AtkObject::accessible-description">lockafmode</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">10</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="afcopysinglecellcb">
+                        <property name="label" translatable="yes" context="scgeneralpage|editmodecb">Use copy as default for single cell AutoFill</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="draw-indicator">True</property>
+                        <child internal-child="accessible">
+                          <object class="AtkObject" id="afcopysinglecellcb-atkobject">
+                            <property name="AtkObject::accessible-description" translatable="yes" context="extended_tip|editmodecb">Copy the value of the cell instead of auto incrementing.</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">10</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
