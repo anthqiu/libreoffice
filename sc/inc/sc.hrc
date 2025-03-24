@@ -163,6 +163,9 @@ class SvxZoomSliderItem;
 // #i59082# assign macro to shape
 #define SID_ASSIGNMACRO                 (SC_VIEW_START + 95)
 
+// AutoFill
+#define SID_AF_COPYSINGLECELL           TypedWhichId<SfxBoolItem>(SC_VIEW_START + 97)
+
 // "Zoom / Synchronize sheets" in options dialog
 #define SID_SC_OPT_SYNCZOOM             TypedWhichId<SfxBoolItem>(SC_VIEW_START + 98)
 

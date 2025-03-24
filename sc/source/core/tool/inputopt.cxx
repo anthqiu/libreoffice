@@ -45,6 +45,7 @@ ScInputOptions::ScInputOptions()
     , bLegacyCellSelection(false)
     , bEnterPasteMode(false)
     , bWarnActiveSheet(true)
+    , bAfCopySingleCell(false)
 {
 }
 
@@ -65,6 +66,7 @@ constexpr OUStringLiteral CFGPATH_INPUT = u"Office.Calc/Input";
 #define SCINPUTOPT_LEGACY_CELL_SELECTION  10
 #define SCINPUTOPT_ENTER_PASTE_MODE       11
 #define SCINPUTOPT_WARNACTIVESHEET        12
+#define SCINPUTOUT_AFCOPYSINGLECELL       13
 
 Sequence<OUString> ScInputCfg::GetPropertyNames()
 {
@@ -80,7 +82,8 @@ Sequence<OUString> ScInputCfg::GetPropertyNames()
             u"ReplaceCellsWarning"_ustr,      // SCINPUTOPT_REPLCELLSWARN
             u"LegacyCellSelection"_ustr,      // SCINPUTOPT_LEGACY_CELL_SELECTION
             u"EnterPasteMode"_ustr,           // SCINPUTOPT_ENTER_PASTE_MODE
-            u"WarnActiveSheet"_ustr};         // SCINPUTOPT_WARNACTIVESHEET
+            u"WarnActiveSheet"_ustr,          // SCINPUTOPT_WARNACTIVESHEET
+            u"AfCopySingleCell"_ustr};        // SCINPUTOUT_AFCOPYSINGLECELL
 }
 
 ScInputCfg::ScInputCfg() :
@@ -125,6 +128,8 @@ void ScInputCfg::ReadCfg()
         SetEnterPasteMode(bVal);
     if (bool bVal; aValues[SCINPUTOPT_WARNACTIVESHEET] >>= bVal)
         SetWarnActiveSheet(bVal);
+    if (bool bVal; aValues[SCINPUTOUT_AFCOPYSINGLECELL] >>= bVal)
+        SetAfCopySingleCell(bVal);
 }
 
 void ScInputCfg::ImplCommit()
@@ -146,6 +151,7 @@ void ScInputCfg::ImplCommit()
     pValues[SCINPUTOPT_LEGACY_CELL_SELECTION] <<= GetLegacyCellSelection();
     pValues[SCINPUTOPT_ENTER_PASTE_MODE] <<= GetEnterPasteMode();
     pValues[SCINPUTOPT_WARNACTIVESHEET] <<= GetWarnActiveSheet();
+    pValues[SCINPUTOUT_AFCOPYSINGLECELL] <<= GetAfCopySingleCell();
     PutProperties(aNames, aValues);
 }
 

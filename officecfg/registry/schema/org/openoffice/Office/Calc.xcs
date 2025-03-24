@@ -714,6 +714,14 @@
         </info>
         <value>true</value>
       </prop>
+      <prop oor:name="AfCopySingleCell" oor:type="xs:boolean" oor:nillable="false">
+        <!-- UIHints: Tools - Options - Spreadsheet - General - [Section] Input settings -->
+        <info>
+          <desc>Copy the value of the cell instead of auto incrementing.</desc>
+          <label>Use copy as default for single cell AutoFill</label>
+        </info>
+        <value>false</value>
+      </prop>
       <prop oor:name="UseScrollLock" oor:type="xs:boolean" oor:nillable="false">
         <info>
           <desc>Toggles the scroll lock behavior allowing to disable it for special keyboards</desc>

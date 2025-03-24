@@ -39,6 +39,7 @@ private:
     bool        bLegacyCellSelection;
     bool        bEnterPasteMode;
     bool        bWarnActiveSheet;
+    bool        bAfCopySingleCell;
 
 public:
                 ScInputOptions();
@@ -73,6 +74,8 @@ public:
     bool        GetEnterPasteMode() const       { return bEnterPasteMode; }
     void        SetWarnActiveSheet(bool bSet)    { bWarnActiveSheet = bSet; }
     bool        GetWarnActiveSheet() const       { return bWarnActiveSheet; }
+    void        SetAfCopySingleCell(bool bSet)    { bAfCopySingleCell = bSet; }
+    bool        GetAfCopySingleCell() const       { return bAfCopySingleCell; }
 };
 
 // CfgItem for input options
