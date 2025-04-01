@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - '**'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Please select branch to work on'
+        required: false
+        default: 'build'
 
 jobs:
   build:
@@ -19,9 +25,19 @@ jobs:
             exit 1
           fi
 
+      - name: Set target branch variable
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            echo "Using manual input branch: ${{ github.event.inputs.branch }}"
+            echo "TARGET_BRANCH=${{ github.event.inputs.branch }}" >> $GITHUB_ENV
+          else
+            branch="${GITHUB_REF#refs/heads/}"
+            echo "Using push branch: $branch"
+            echo "TARGET_BRANCH=$branch" >> $GITHUB_ENV
+          fi
+
       - name: Rebase build branch if push is from a non-build branch
         run: |
-          TARGET_BRANCH="${GITHUB_REF#refs/heads/}"
           git reset --hard
           git checkout build
           git fetch origin build
@@ -39,6 +55,9 @@ jobs:
         run: |
           [ -f autogen.input ] || echo "--enable-dbgutil --without-doxygen" > autogen.input
           ./autogen.sh
+
+      - name: Run make
+        run: make
 
       - name: Run make check
         run: make check
