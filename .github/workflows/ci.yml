@@ -1,0 +1,45 @@
+name: CI - Build LibreOffice
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: /workspace
+    steps:
+      - name: Verify repository exists
+        run: |
+          if [ ! -d ".git" ]; then
+            echo "Repository not found in /workspace. Please mount your local repository folder."
+            exit 1
+          fi
+
+      - name: Rebase build branch if push is from a non-build branch
+        run: |
+          TARGET_BRANCH="${GITHUB_REF#refs/heads/}"
+          git reset --hard
+          git checkout build
+          git fetch origin build
+          if [ "$TARGET_BRANCH" != "build" ]; then
+            echo "Trigger branch is '$TARGET_BRANCH', rebasing build branch onto it."
+            git fetch origin $TARGET_BRANCH
+            git rebase --hard origin/build
+            git rebase origin/$TARGET_BRANCH
+          else
+            echo "Push is on build branch; no rebase needed."
+            git reset --hard origin/build
+          fi
+
+      - name: Prepare build configuration
+        run: |
+          [ -f autogen.input ] || echo "--enable-dbgutil --without-doxygen" > autogen.input
+          ./autogen.sh
+
+      - name: Run make check
+        run: make check
+
