@@ -44,7 +44,6 @@ jobs:
           if [ "$TARGET_BRANCH" != "build" ]; then
             echo "Trigger branch is '$TARGET_BRANCH', rebasing build branch onto it."
             git fetch origin $TARGET_BRANCH
-            git rebase --hard origin/build
             git rebase origin/$TARGET_BRANCH
           else
             echo "Push is on build branch; no rebase needed."
