@@ -36,19 +36,11 @@ jobs:
             echo "TARGET_BRANCH=$branch" >> $GITHUB_ENV
           fi
 
-      - name: Rebase build branch if push is from a non-build branch
+      - name: Checkout
         run: |
+          git fetch origin $TARGET_BRANCH
           git reset --hard
-          git checkout build
-          git fetch origin build
-          if [ "$TARGET_BRANCH" != "build" ]; then
-            echo "Trigger branch is '$TARGET_BRANCH', rebasing build branch onto it."
-            git fetch origin $TARGET_BRANCH
-            git rebase origin/$TARGET_BRANCH
-          else
-            echo "Push is on build branch; no rebase needed."
-            git reset --hard origin/build
-          fi
+          git checkout origin/$TARGET_BRANCH
 
       - name: Prepare build configuration
         run: |
