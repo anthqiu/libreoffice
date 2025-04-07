@@ -22,6 +22,18 @@ jobs:
             exit 1
           fi
 
+      - name: Print toolchain versions
+        run: |
+          echo ======clang:======
+          which clang
+          clang --version
+          echo ======llvm-config:======
+          which llvm-config
+          llvm-config --version
+          echo ======ccache:======
+          which ccache
+          ccache --version
+
       - name: Set target branch variable
         run: |
           if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
