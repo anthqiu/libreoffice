@@ -48,8 +48,4 @@ jobs:
           ./autogen.sh
 
       - name: Run make
-        run: make
-
-      - name: Run make check
-        run: make check
-
+        run: make -O  build unitcheck slowcheck
