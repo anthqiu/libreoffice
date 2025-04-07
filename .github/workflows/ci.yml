@@ -41,7 +41,7 @@ jobs:
 
       - name: Prepare build configuration
         run: |
-          echo -e "--enable-dbgutil\n--without-doxygen\n--enable-kf5\n--disable-dependency-tracking\n--enable-odk\n--enable-mergelibs\n--disable-dconf\n--enable-python=internal\n--enable-atspi-tests" > autogen.input
+          echo -e "--enable-dbgutil\n--enable-compiler-plugins\n--enable-kf5\n--disable-compiler-plugins-analyzer-pch\n--disable-dependency-tracking\n--disable-split-debug\n--enable-odk\n--disable-dconf\n--enable-python=internal\n--enable-atspi-tests" > autogen.input
           ./autogen.sh
 
       - name: Run make
