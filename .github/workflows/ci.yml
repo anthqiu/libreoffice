@@ -34,6 +34,9 @@ jobs:
           which ccache
           ccache --version
 
+      - name: Print environment variables
+        run: printenv
+
       - name: Set target branch variable
         run: |
           if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
