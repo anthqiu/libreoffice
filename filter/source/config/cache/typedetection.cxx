@@ -273,6 +273,7 @@ int getFlatTypeRank(std::u16string_view rType)
         "xpm_XPM",
         "xbm_X_Consortium",
         "writer_Rich_Text_Format",
+        "writer_Markdown_Format",
         "writer_web_HTML_help",
         "generic_HTML",
 

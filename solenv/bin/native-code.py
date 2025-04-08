@@ -734,6 +734,7 @@ writer_constructor_list = [
     "com_sun_star_comp_Writer_RtfExport_get_implementation",
     "com_sun_star_comp_Writer_DocxExport_get_implementation",
 # sw/util/sw_writerfilter.component
+    "com_sun_star_comp_Writer_MarkdownFilter_get_implementation",
     "com_sun_star_comp_Writer_RtfFilter_get_implementation",
     "com_sun_star_comp_Writer_WriterFilter_get_implementation",
 # writerperfect/source/writer/wpftwriter.component

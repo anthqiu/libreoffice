@@ -334,6 +334,7 @@ constexpr ExtensionMap aWriterExtensionMap[] =
     { "ott",   u"writer8_template"_ustr },
     { "pdf",   u"writer_pdf_Export"_ustr },
     { "epub",  u"EPUB"_ustr },
+    { "md",    u"Markdown Format"_ustr },
     { "rtf",   u"Rich Text Format"_ustr },
     { "txt",   u"Text"_ustr },
     { "xhtml", u"XHTML Writer File"_ustr },

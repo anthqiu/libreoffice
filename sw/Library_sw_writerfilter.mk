@@ -122,6 +122,7 @@ $(eval $(call gb_Library_add_exception_objects,sw_writerfilter,\
     sw/source/writerfilter/dmapper/WrapPolygonHandler \
 	sw/source/writerfilter/dmapper/WriteProtection \
     sw/source/writerfilter/dmapper/util \
+    sw/source/writerfilter/filter/MarkdownFilter \
     sw/source/writerfilter/filter/RtfFilter \
     sw/source/writerfilter/filter/WriterFilter \
     sw/source/writerfilter/ooxml/Handler \

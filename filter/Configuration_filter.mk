@@ -323,6 +323,7 @@ $(eval $(call filter_Configuration_add_types,fcfg_langpack,fcfg_writer_types.xcu
 	writer_MS_Word_97 \
 	writer_MS_Word_97_Vorlage \
 	writer_ODT_FlatXML \
+	writer_Markdown_Format \
 	writer_Rich_Text_Format \
 	writer_StarOffice_XML_Writer \
 	writer_WordPerfect_Document \
@@ -372,6 +373,7 @@ $(eval $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters
 	MS_Word_97 \
 	MS_Word_97_Vorlage \
 	ODT_FlatXML \
+	Markdown_Format \
 	Rich_Text_Format \
 	StarOffice_XML__Writer_ \
 	WordPerfect \
