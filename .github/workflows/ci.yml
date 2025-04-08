@@ -35,7 +35,7 @@ jobs:
           ccache --version
 
       - name: Print environment variables
-        run: printenv
+        run: printenv | grep -v "RUNNER_TOKEN"
 
       - name: Set target branch variable
         run: |
